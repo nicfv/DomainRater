@@ -26,7 +26,7 @@ input[type=text] {
     text-align: center;
     width: 50%;
     border: none;
-    border-bottom: 2px solid red;
+    border-bottom: 2px solid white;
     background-color: rgba(128, 128, 128, 0.25);
     transition: border-bottom 1s;
 }
@@ -40,7 +40,38 @@ pre {
     padding: 1em;
     background-color: rgba(128, 128, 128, 0.25);
     border-radius: 0.25em;
-    overflow: auto;
+    white-space: pre-wrap;
+    max-height: 1000px;
+    overflow: hidden;
+    transition: max-height 0.5s;
+}
+
+pre[status=collapse] {
+    max-height: 4em;
+    overflow: hidden;
+}
+
+button {
+    display: block;
+    float: right;
+    border: none;
+    background: #900;
+    border-radius: 100%;
+    width: 1em;
+    height: 1em;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 0 0.5em 0 rgba(0, 0, 0, 0.75) inset;
+    right: 1.5em;
+    top: 0.5em;
+}
+
+button[status=collapse] {
+    background: #090;
+}
+
+::placeholder {
+    color: rgba(255, 255, 255, 0.5);
 }
 
 @media (prefers-color-scheme: dark) {

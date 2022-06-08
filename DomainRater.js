@@ -3,6 +3,7 @@
  * Represents a domain name rating system.
  */
 class DomainRater {
+    static get maxScore() { return 1e3; }
     #domain;
     #score;
     #messages;
@@ -37,7 +38,7 @@ class DomainRater {
      * Return the numerical value for the score of this domain.
      */
     getScore() {
-        return this.#score;
+        return this.#domain.isValid() ? this.#score : DomainRater.maxScore;
     }
     /**
      * Return the array of detail messages for this domain.
@@ -92,7 +93,7 @@ class DomainRater {
                 break;
             }
             case ('http'): {
-                this.#addMessage('Unsecured connection protocol.', 5);
+                this.#addMessage('Unsecured connection protocol.', 100);
                 break;
             }
             case ('https'): {
@@ -114,8 +115,8 @@ class DomainRater {
             if (name[0] === '-' || name[name.length - 1] === '-') {
                 this.#addMessage('Invalid identifier. Cannot start or end with a hyphen!');
             }
-            const VOWELS = /[aeiouy]{3,}/ig,
-                CONSONANTS = /[bcdfghjklmnpqrstvwxz]{3,}/ig,
+            const VOWELS = /[aeiou]{3,}/ig,
+                CONSONANTS = /[bcdfghjklmnpqrstvwxyz]{3,}/ig,
                 MATCH_VOWELS = [...name.matchAll(VOWELS)].map(x => x[0]),
                 MATCH_CONSONANTS = [...name.matchAll(CONSONANTS)].map(x => x[0]),
                 CHEAP = /[etaoinshrdl]/ig,
@@ -125,7 +126,9 @@ class DomainRater {
                 COUNT_CHEAP = [...name.matchAll(CHEAP)].length,
                 COUNT_MEDIUM = [...name.matchAll(MEDIUM)].length,
                 COUNT_EXPENSIVE = [...name.matchAll(EXPENSIVE)].length,
-                COUNT_SPECIAL = [...name.matchAll(SPECIAL)].length;
+                COUNT_SPECIAL = [...name.matchAll(SPECIAL)].length,
+                UNIQUE = [...new Set(name)];
+            this.#addMessage(UNIQUE.length + ' unique characters: ' + UNIQUE.join(', '), 3 * UNIQUE.length ** 2);
             if (!!MATCH_VOWELS.length) {
                 this.#addMessage(MATCH_VOWELS.length + ' groups of 3 or more vowels: ' + MATCH_VOWELS.join(', '), 10 * MATCH_VOWELS.length);
                 for (let match in MATCH_VOWELS) {
@@ -148,7 +151,7 @@ class DomainRater {
                 this.#addMessage(COUNT_EXPENSIVE + ' characters from ' + EXPENSIVE.source, 20 * COUNT_EXPENSIVE);
             }
             if (COUNT_SPECIAL) {
-                this.#addMessage(COUNT_SPECIAL + ' numbers and hyphens', 20 * COUNT_SPECIAL);
+                this.#addMessage(COUNT_SPECIAL + ' numbers and hyphens', 25 * COUNT_SPECIAL);
             }
         } else {
             throw 'Invalid parameter types.';
@@ -191,7 +194,7 @@ class DomainRater {
             }
             case ('net'):
             case ('org'): {
-                this.#addMessage('Well-known network or organization TLD. Desirable.', 5);
+                this.#addMessage('Well-known network or organization TLD. Desirable.', 15);
                 break;
             }
             case ('edu'):
@@ -201,34 +204,48 @@ class DomainRater {
                 this.#addMessage('Official governmental or educational TLD. Highly desirable, but only issued by the US government.', 0);
                 break;
             }
+            case ('ad'): // Andorra
             case ('au'): // Australia
+            case ('aw'): // Aruba, West Indies
             case ('br'): // Brazil
+            case ('bm'): // Bermuda
             case ('ca'): // Canada
+            case ('cm'): // Cameroon
+            case ('cn'): // China
+            case ('de'): // Germany
             case ('eu'): // European Union
             case ('fr'): // France
             case ('ie'): // Ireland
             case ('it'): // Italy
+            case ('jp'): // Japan
+            case ('lb'): // Lebanon
             case ('mc'): // Monaco
+            case ('md'): // Moldova
             case ('mg'): // Madagascar
+            case ('mk'): // North Macedonia
             case ('mo'): // Macau
             case ('my'): // Malaysia
+            case ('nc'): // New Caledonia
             case ('no'): // Norway
+            case ('om'): // Oman
+            case ('pm'): // Saint-Pierre & Miquelon
             case ('re'): // Reunion
             case ('sa'): // Saudi Arabia
             case ('sk'): // Slovakia
             case ('sm'): // San Marino
+            case ('sz'): // Eswatini
             case ('ua'): // Ukraine
             case ('uk'): // United Kingdom
             case ('us'): // United States
             case ('va'): {// Vatican City
-                this.#addMessage('Country-level TLD with some restrictions. Usually these are safe and reputable.', 10);
+                this.#addMessage('Country-level TLD with some restrictions. Usually these are safe and reputable.', 25);
                 break;
             }
             default: {
                 if (this.#domain.getTLD().length === 2) {
-                    this.#addMessage('Country-level TLD with few or no restrictions. These often are marked as spam websites.', 35);
+                    this.#addMessage('Country-level TLD with few or no restrictions. These often are marked as spam websites.', 50);
                 } else {
-                    this.#addMessage('Fun or unknown TLD. Not desirable as these websites may be flagged as spam by some search engines.', 45);
+                    this.#addMessage('Fun or unknown TLD. Not desirable as these websites may be flagged as spam by some search engines.', 75);
                 }
             }
         }

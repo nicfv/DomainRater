@@ -11,12 +11,28 @@ function main() {
         const RATING = new DomainRater(domain);
         OUTPUT.innerText = RATING.getDomain() + '\n' +
             RATING.getPattern() + '\n\n' +
-            'Score: ' + RATING.getScore() + '\n\n' +
+            'Score: ' + RATING.getScore() + ' (lower scores are better)\n\n' +
             RATING.getMessages().join('\n');
         document.body.style.backgroundColor = 'hsl(' + clamp(translate(RATING.getScore(), 0, 1e3, 140, 0), 0, 120) + ',100%,45%)';
     };
     DOMAIN_INPUT.oninput = () => update(DOMAIN_INPUT.value);
     update('');
+}
+/**
+ * Collapse or expand the results.
+ */
+function collapse() {
+    const RESULT = document.getElementById('result'),
+        CLOSE_BTN = document.getElementById('collapse');
+    if (RESULT.getAttribute('status') === 'open') {
+        RESULT.setAttribute('status', 'collapse');
+        CLOSE_BTN.setAttribute('status', 'collapse');
+        CLOSE_BTN.innerText = '';
+    } else {
+        RESULT.setAttribute('status', 'open');
+        CLOSE_BTN.setAttribute('status', 'open');
+        CLOSE_BTN.innerText = '-';
+    }
 }
 /**
  * Clamp `x` between `min` and `max`.
