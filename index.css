@@ -1,0 +1,50 @@
+@import url('https://necolas.github.io/normalize.css/8.0.1/normalize.css');
+
+* {
+    outline: none;
+    font-family: sans-serif;
+    color: black;
+}
+
+body {
+    transition: background-color 0.5s;
+}
+
+::selection {
+    background: rgba(64, 64, 192, 0.5);
+}
+
+h1 {
+    text-align: center;
+}
+
+input[type=text] {
+    font: 36px sans-serif;
+    display: block;
+    margin: 1em auto;
+    padding: 0.5em;
+    text-align: center;
+    width: 50%;
+    border: none;
+    border-bottom: 2px solid red;
+    background-color: rgba(128, 128, 128, 0.25);
+    transition: border-bottom 1s;
+}
+
+input[type=text]:focus {
+    border-bottom: 2px solid blue;
+}
+
+pre {
+    margin: 1em;
+    padding: 1em;
+    background-color: rgba(128, 128, 128, 0.25);
+    border-radius: 0.25em;
+    overflow: auto;
+}
+
+@media (prefers-color-scheme: dark) {
+    * {
+        color: white;
+    }
+}
